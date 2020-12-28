@@ -2,3 +2,9 @@ forecasting_confirmed.html
 forecasting_deaths.html
 __pycache__/
 .ipynb_checkpoints
+pdf/main.out
+pdf/main.log
+pdf/main.synctex.gz
+pdf/main.fls
+pdf/main.fdb_latexmk
+pdf/main.aux
