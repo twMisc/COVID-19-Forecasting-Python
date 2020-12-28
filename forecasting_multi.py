@@ -24,9 +24,10 @@ from forecasting_setup import observe_days, predict_days, keepdays, training_cou
 tabulate_format = 'grid'
 #%% load datset from ccse github using written function
 days = observe_days + predict_days
-mypath = r'../COVID-19/'
-subpath = r'csse_covid_19_data/csse_covid_19_time_series'
-the_path = os.path.join(mypath,subpath)
+the_path = os.path.join('..','COVID-19','csse_covid_19_data','csse_covid_19_time_series')
+#mypath = r'../COVID-19/'
+#subpath = r'csse_covid_19_data/csse_covid_19_time_series'
+#the_path = os.path.join(mypath,subpath)
 [df_infected,df_confirmed,df_recovered,df_deaths] = get_all_time_series(the_path) #%% create df of needed information for each country
 #from information import df_information
 #print(df_information)
