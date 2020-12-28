@@ -127,6 +127,17 @@ y_test = np.array(y_test)
 y1 = y_train[:,0:predict_days]
 y2 = y_train[:,predict_days:2*predict_days]
 #%% tensorflow
+gpus = tf.config.experimental.list_physical_devices('GPU')
+if gpus:
+  try:
+    # Currently, memory growth needs to be the same across GPUs
+    for gpu in gpus:
+      tf.config.experimental.set_memory_growth(gpu, True)
+    logical_gpus = tf.config.experimental.list_logical_devices('GPU')
+    print(len(gpus), "Physical GPUs,", len(logical_gpus), "Logical GPUs")
+  except RuntimeError as e:
+    # Memory growth must be set before GPUs have been initialized
+    print(e)
 tf.keras.backend.set_floatx('float64')
 confirmed_regressor_tf = tf.keras.Sequential([
     tf.keras.layers.Dense(units=64, activation='relu'),
