@@ -11,7 +11,7 @@ $ cd COVID-19-Forecasting-Python
 
 Install the required packages in Python.
 ```bash
-$ pip install xgboost numpy tensorflow sklearn tabulate matplotlib plotly pandas
+$ pip install xgboost numpy tensorflow scikit-learn tabulate matplotlib plotly pandas
 ```
 Alternatively, install the requirements using `requirements.txt` if you encountered into some trouble.
 ```bash
