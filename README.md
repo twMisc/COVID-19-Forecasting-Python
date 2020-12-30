@@ -23,7 +23,7 @@ $ source forecasting/bin/activate
 ```
 On Windows, run:
 ```shell
-> .forecasting\Scripts\activate.bat
+> forecasting\Scripts\activate.bat
 ```
 Alternatively, you can do this using [Conda](https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html).
 ```bash
