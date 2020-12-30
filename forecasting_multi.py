@@ -280,6 +280,7 @@ def print_and_draw(s):
     plt.plot(np.arange(len(confirmed_p_int))+ observe_days+ rest ,confirmed_p2_int,marker = 'x',markersize = '3',linewidth = 0.5,label='linear regression')
     plt.plot(np.arange(len(confirmed_p_int))+ observe_days+ rest ,confirmed_p3_int,marker = 'x',markersize = '3',linewidth = 0.5,label='dense network')
     plt.legend()
+    plt.savefig('forecasting_confirmed.png')
     plt.show()
 
     #%%
@@ -290,6 +291,7 @@ def print_and_draw(s):
     plt.plot(np.arange(len(confirmed_p_int))+ observe_days+ rest ,deaths_p2_int,marker = 'x',markersize = '3',linewidth = 0.5,label='linear regression')
     plt.plot(np.arange(len(confirmed_p_int))+ observe_days+ rest ,deaths_p3_int,marker = 'x',markersize = '3',linewidth = 0.5,label='dense network')
     plt.legend()
+    plt.savefig('forecasting_deaths.png')
     plt.show()
     
     #%%

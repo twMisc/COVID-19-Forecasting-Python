@@ -10,6 +10,7 @@
 \usepackage{listings}
 \usepackage{xcolor}
 \usepackage{markdown}
+\usepackage{ wasysym }
 
 \definecolor{codegreen}{rgb}{0,0.6,0}
 \definecolor{codegray}{rgb}{0.5,0.5,0.5}
@@ -84,7 +85,7 @@ We use the confirmed and death collected explained in previous section to train 
 In this example, we split out dataset so that we wish to come up with a model that predict 1 day of confirmed/deaths given 30 days of confirmed/deaths datas. Later we will demonstrate different results with different data windowing.
 
 \subsection{Normalization}
-We normalize the given data by each window. Given an confirmed or deaths input window \(\mathbf{x}\), which should be a array. If we use the windowing example as previous subsection, we get an array of $30$ elements of confiremd/deaths people that day. We calculate the mean \(\mu(\mathbf{x})\) and variance \(\sigma(\mathbf{x})\), then the actual input data \(\hat{\mathbf{x}}\) will be given by 
+We normalize the given data by each window. Given an confirmed or deaths input window \(\mathbf{x}\), which should be a array. If we use the windowing example as previous subsection, we get an array of $30$ elements of confirmed/deaths people that day. We calculate the mean \(\mu(\mathbf{x})\) and variance \(\sigma(\mathbf{x})\), then the actual input data \(\hat{\mathbf{x}}\) will be given by 
 \[\hat{\mathbf{x}}_i = \frac{\mathbf{x}_i - \mu(\mathbf{x})}{\sigma(\mathbf{x})} \quad \text{ if } \sigma(\mathbf{x})\neq 0, \]
 and 
 \[\hat{\mathbf{x}}_i = \mathbf{x}_i - \mu(\mathbf{x}) \quad \text{ if } \sigma(\mathbf{x})= 0\]
@@ -366,23 +367,48 @@ It is interesting to try Taiwan's dataset as the training set, since Taiwan has 
 \end{tcolorbox}
 
 \section{The program}
-\subsection{How to run}
-Here we demonstrate how to run our program in UNIX environment. A similar instruction can be found at \href{https://github.com/twMisc/COVID-19-Forecasting-Python}{https://github.com/twMisc/COVID-19-Forecasting-Python}. Suppose one has python3, pip, git installed. First download the dataset and our program. 
+Here we demonstrate how to run our program in UNIX environment. A similar instruction and the code can be found at \href{https://github.com/twMisc/COVID-19-Forecasting-Python}{https://github.com/twMisc/COVID-19-Forecasting-Python}. If you want to run using \href{https://www.docker.com/}{Docker}, skip to the Docker section. Suppose one has python3, pip, git installed. The following installation is tested with python3.8. 
+\subsection{Download the data and program}
+First download the dataset and our program. 
 \lstset{style=mystyle}
 \begin{lstlisting}[language=bash]
 $ git clone https://github.com/CSSEGISandData/COVID-19/
 $ git clone https://github.com/twMisc/COVID-19-Forecasting-Python
 $ cd COVID-19-Forecasting-Python
 \end{lstlisting}
-Install the required packages in Python.
+
+\subsection{Create a virtual environment (recommended)}
+This section is not needed but recommended. Create a virtual environment using
 \begin{lstlisting}[language=bash]
-$ pip install xgboost numpy tensorflow scikit-learn tabulate matplotlib plotly pandas
+$ python -m venv forecasting
 \end{lstlisting}
+On UNIX or MacOS, run:
+\begin{lstlisting}[language=bash]
+$ source forecasting/bin/activate
+\end{lstlisting}
+On Windows, run:
+\begin{lstlisting}[language=bash]
+> .forecasting\Scripts\activate.bat
+\end{lstlisting}
+Alternatively, you can do this using \href{https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html}{Conda}.
+\begin{lstlisting}[language=bash]
+$ conda create --name forecasting python=3.8
+$ conda activate forecasting    
+\end{lstlisting}
+
+\subsection{Install the requirements}
+Upgrade pip and install the required packages using pip
+\begin{lstlisting}[language=bash]
+$ python -m pip install --upgrade pip
+$ pip install xgboost numpy tensorflow scikit-learn tabulate
+ \end{lstlisting}
 Alternatively, install the requirements using requirements.txt if you encountered into some trouble.
 \begin{lstlisting}[language=bash]
 $ pip install -r requirements.txt    
 \end{lstlisting}
-Then modify the file \texttt{forecasting\_setup.py} as required
+
+\subsection{Modify the parameters}
+Modify the file \texttt{forecasting\_setup.py} as required
 \begin{lstlisting}[language=Python]
 observe_days = 30
 predict_days = 1
@@ -395,7 +421,18 @@ training_countries = ['US','Spain']
     \item \texttt{keepdays}: the length of data to NOT use in training
     \item \texttt{training\_countries}: the countries to be used in training, can be found in \texttt{country\_list.txt}
 \end{itemize}
-Run \texttt{forecasting\_run.py} in console to see the results if you want a quick glance.
+
+\subsection{Run it in Python interpreter}
+You can also use the function yourself in your python console. After setting up \texttt{forecasting\_setup.py}, in python, run something like
+\begin{lstlisting}[language=Python]
+>>> from forecasting_multi import print_and_draw
+>>> print_and_draw('Japan') 
+\end{lstlisting}
+Replace Japan with any country in \texttt{country\_list.txt}. Two files \\
+\texttt{forecasting\_confirmed.png} and \texttt{forecasting\_deaths.png} will be generated after running \texttt{print\_and\_draw(country\_name)}, where \texttt{country\_name} is your input. Note that two html plot files \texttt{forecasting\_confirmed.html} and \texttt{forecasting\_deaths.html} generated by Plotly should also be available.
+
+\subsection{Using the pre-written run file}
+Run \texttt{forecasting\_run.py} in console to see the results if you want a quick glance with multiple outputs:
 \begin{lstlisting}[language=bash]
 $ python forecasting_run.py
 \end{lstlisting}
@@ -410,19 +447,22 @@ Open \texttt{forecasting\_run.py} in VScode, which also includes some explanatio
 If you have \href{https://jupyter.org/install.html}{Jupyter Notebook or JupyterLab} installed, you can use them as well.
 
 Open \texttt{forecasting\_run.ipynb} in JupyterLab or the classic Jupyter Notebook.
-
-\subsection{Run it in Python interpreter}
-You can also use the function yourself in your python console. After setting up \texttt{forecasting\_setup.py}, in python, run something like
-\begin{lstlisting}[language=Python]
->>> from forecasting_multi import print_and_draw
->>> print_and_draw('Japan') 
+\subsection{Run in Docker (with Jupyter-lab)}
+You can ignore all steps above and run in Docker. Suppose you have docker installed where you have accessibility with non-root user, in console run 
+\begin{lstlisting}[language=bash]
+$ docker build --pull --rm -f "Dockerfile" -t covid19forecastingpython:latest "." 
 \end{lstlisting}
-Replace Japan with any country in \texttt{country\_list.txt}. Note that two html plot files \texttt{forecasting\_confirmed.html} and \texttt{forecasting\_deaths.html} generated by Plotly should also be available after running 
-\begin{lstlisting}[language=Python]
-print_and_draw(country_name).
-\end{lstlisting}
-where \texttt{country\_name} is your input.
+This should take a while.
 
+After the build is finished, run 
+\begin{lstlisting}[language=bash]
+$ docker run -it --rm -p 8888:8888 covid19forecastingpython:latest 
+\end{lstlisting}
+You should see a url in your console as this form (the token will be different)
+\begin{lstlisting}
+http://127.0.0.1:8888/lab?token=fb2007c7ca877df17d8c72ccfd4c37d94a668bff2d40be4d
+\end{lstlisting}
+Open this url in your web browser to use Jupyter-lab. Click on\\ \texttt{forecasting\_run.ipynb} on the left. Click the $\RHD \RHD$ symbol to run. You can open \texttt{forecasting\_setup.py} to modify the parameters, take a look at section 5.4.
 \section{Conclusion}
 In our experiment, while linear regression may be useful if we want to predict only 1 day, the fails to predict well if more days are required. The XGBoost and dense neural network will be more useful in such case. In general we suggest using XGBoost or the dense network when predicting multiple days. The XGBoost model may still be improved since we do not have any correlation for the predict days, if we define some custom objective function the results may be improved.
 
