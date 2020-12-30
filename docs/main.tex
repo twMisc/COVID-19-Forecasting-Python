@@ -110,7 +110,9 @@ The following results comparison of different models where the windowing and the
 Let $\hat{Y} = \{\hat{\mathbf{y}_i}\}$ be the predicted values, and let $Y =\{ \mathbf{y}_i\}$ be the corresponding true values, the predict score is defined as  
 \[\text{score}  = 1 - \frac{\sum_i (\hat{\mathbf{y}_i} - \mathbf{y}_i)^2}{\sum_i (\mathbf{y}_i - \mu(Y))^2  },\]
 where $\mu(Y)$ is the mean of $Y$. This gives us a glance at how well the model is as $1$ giving the best score, but one should not only look at this score to determine if a model's useful. In the following, we will also demonstrate the forecasting results of a given country, we will calculate the maximum error where both the dataset and the prediction has a value.
-\subsection{Multiple countries as training sets}
+
+In the following sections, we will use Japan as the testing set output, since Japan will not be used in any training in our following tests and Japan is a good example of a country where the COVID-19 pandemic occurs. If you want to see results of different countries, checkout section 5 to see how to run the program by yourself.
+\subsection{Japan: Multiple countries as training sets}
 First results comes where we use US, Spain, Belgium, China, France, Germany, United Kingdom, Italy data as training sets, but also keeping the last 150 days of data out of the windowing. All the other data window pairs will be collected as the testing set. 
 \subsubsection{1 day prediction}
 Here we will predict $1$ day by $30$ days. We'll show the output of our program, which shows the training/testing score of each model and the maximum error and prediction figure of the model. 
@@ -239,7 +241,7 @@ Here we use 30 days to predict 30 days.
     \end{center}
 \end{tcolorbox}
 The results are similar to the 10 days one with linear regression being weaker.
-\subsection{Taiwan as training set}
+\subsection{Japan: Taiwan as training set}
 It is interesting to try Taiwan's dataset as the training set, since Taiwan has very few infected and deaths, so we may want to see in this case how the model performs. Interestingly, we notice that the multi-day prediction of deaths performs even better in this case.
 \subsubsection{1 day prediction}
 \begin{tcolorbox}
