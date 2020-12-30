@@ -9,3 +9,4 @@ docs/main.fdb_latexmk
 docs/main.aux
 forecasting_confirmed.png
 forecasting_deaths.png
+forecasting/
