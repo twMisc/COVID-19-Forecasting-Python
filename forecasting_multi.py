@@ -126,6 +126,8 @@ x_test = np.array(x_test)
 y_test = np.array(y_test)
 y1 = y_train[:,0:predict_days]
 y2 = y_train[:,predict_days:2*predict_days]
+y3 = y_test[:,0:predict_days]
+y4 = y_test[:,predict_days:2*predict_days]
 #%% tensorflow
 gpus = tf.config.experimental.list_physical_devices('GPU')
 if gpus:
@@ -164,12 +166,22 @@ deaths_regressor_tf.fit(x_train, y2,epochs=20,verbose=0)
 def confirmed_score(x,y):
     y_true = y
     y_pred = (confirmed_regressor_tf(x).numpy())
-    return 1-(np.sum((y_true - y_pred) ** 2))/np.sum((y_true - y_true.mean()) ** 2)
+    the_sum = np.sum((y_true - y_true.mean()) ** 2)
+    if the_sum ==0:
+        the_sum = 1
+    return 1-(np.sum((y_true - y_pred) ** 2))/the_sum
 def deaths_score(x,y):
     y_true = y
     y_pred = (deaths_regressor_tf(x).numpy())
-    return 1-(np.sum((y_true - y_pred) ** 2))/np.sum((y_true - y_true.mean()) ** 2)
-
+    the_sum = np.sum((y_true - y_true.mean()) ** 2)
+    if the_sum ==0:
+        the_sum = 1
+    return 1-(np.sum((y_true - y_pred) ** 2))/the_sum
+def cal_score(y_pred,y_true):
+    the_sum = np.sum((y_true - y_true.mean()) ** 2)
+    if the_sum ==0:
+        the_sum = 1
+    return 1-(np.sum((y_true - y_pred) ** 2))/the_sum
 
 # %% train linear regression and xgboost
 confirmed_regressor = MultiOutputRegressor(xgb.XGBRegressor())
@@ -185,7 +197,7 @@ deaths_regressor_l.fit(x_train, y2)
 print('Data length:\t',num_times)
 print(tabulate([['Confirmed', confirmed_regressor.score(x_train,y1),confirmed_regressor_l.score(x_train,y1),confirmed_score(x_train,y1)],['Deaths',deaths_regressor.score(x_train,y2),deaths_regressor_l.score(x_train,y2),deaths_score(x_train,y2)]],headers=['Training score', 'xgboost','linear regression','dense network'], tablefmt=tabulate_format))
 print('\n')
-print(tabulate([['Confirmed', confirmed_regressor.score(x_test,y_test[:,0:predict_days]),confirmed_regressor_l.score(x_test,y_test[:,0:predict_days]),confirmed_score(x_test,y_test[:,0:predict_days])],['Deaths',deaths_regressor.score(x_test,y_test[:,predict_days:2*predict_days]),deaths_regressor_l.score(x_test,y_test[:,predict_days:2*predict_days]),deaths_score(x_test,y_test[:,predict_days:2*predict_days])]],headers=['Testing score', 'xgboost','linear regression','dense network'], tablefmt=tabulate_format))
+print(tabulate([['Confirmed', confirmed_regressor.score(x_test,y3),confirmed_regressor_l.score(x_test,y3),confirmed_score(x_test,y4)],['Deaths',deaths_regressor.score(x_test,y4),deaths_regressor_l.score(x_test,y4),deaths_score(x_test,y4)]],headers=['Testing score', 'xgboost','linear regression','dense network'], tablefmt=tabulate_format))
 
 
 # %%
@@ -271,7 +283,8 @@ def print_and_draw(s):
     print(country_code)
     print(tabulate([['Confirmed', np.max(np.abs(confirmed_o[observe_days+rest:]-confirmed_p_int[:-predict_days])),np.max(np.abs(confirmed_o[observe_days+rest:]-confirmed_p2_int[:-predict_days])),np.max(np.abs(confirmed_o[observe_days+rest:]-confirmed_p3_int[:-predict_days]))],['Deaths', np.max(np.abs(deaths_o[observe_days+rest:]-deaths_p_int[:-predict_days])),np.max(np.abs(deaths_o[observe_days+rest:]-deaths_p2_int[:-predict_days])),np.max(np.abs(deaths_o[observe_days+rest:]-deaths_p3_int[:-predict_days]))]],headers=['Max error', 'xgboost','linear regression','dense network'], tablefmt=tabulate_format))
     print('\n')
-
+    print(tabulate([['Confirmed', cal_score(confirmed_p_int[:-predict_days],confirmed_o[observe_days+rest:]),cal_score(confirmed_p2_int[:-predict_days],confirmed_o[observe_days+rest:]),cal_score(confirmed_p3_int[:-predict_days],confirmed_o[observe_days+rest:])],['Deaths', cal_score(deaths_p_int[:-predict_days],deaths_o[observe_days+rest:]),cal_score(deaths_p2_int[:-predict_days],deaths_o[observe_days+rest:]),cal_score(deaths_p3_int[:-predict_days],deaths_o[observe_days+rest:])]],headers=['Score', 'xgboost','linear regression','dense network'], tablefmt=tabulate_format))
+    
     #%%
     plt.figure()
     plt.title(country_code+' (confirmed)')
